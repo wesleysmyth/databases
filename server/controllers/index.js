@@ -10,11 +10,14 @@ module.exports = {
       // promisified models.messages.get in order to preserve order of async function calls
       var getMessagesPromise = bluebird.promisify(models.messages.get);
       getMessagesPromise()
-      .then(JSON.stringify)
-      .then(function(data) {
+      .then(function(err, obj) {
+        console.log('inside response');
+        var data = JSON.stringify(obj);
         handler.sendResponse(200, res, data, handler.headers);
       })
       .catch(function(err) {
+        err = JSON.stringify(err);
+        console.log('');
         handler.sendResponse(404, res, err, handler.headers);
       });
     },

@@ -1,5 +1,6 @@
 var express = require('express');
 var db = require('./db');
+var controllers = require('./controllers');
 
 // Middleware
 var morgan = require('morgan');
@@ -8,14 +9,8 @@ var parser = require('body-parser');
 // Router
 var router = require('./routes.js');
 
-var requestHandler = require('./request-handler.js');
-
 var app = express();
 module.exports.app = app;
-
-app.get('http://127.0.0.1:3000/classes', function(req, res) {
-  requestHandler.messageHandler(req, res);
-});
 
 // Set what we are listening on.
 app.set("port", 3000);
