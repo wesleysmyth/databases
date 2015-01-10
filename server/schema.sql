@@ -1,5 +1,4 @@
 -- CREATE DATABASE chat;
-
 USE chat;
 
 CREATE TABLE messages (

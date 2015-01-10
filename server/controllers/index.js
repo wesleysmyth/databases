@@ -1,3 +1,4 @@
+var http = require('http');
 var models = require('../models');
 var bluebird = require('bluebird');
 var handler = require('../request-handler.js');
@@ -22,19 +23,16 @@ module.exports = {
     // a function which handles posting a message to the database
     post: function (req, res) {
       var postMessagePromise = bluebird.promisify(models.messages.post);
-      var data = '';
-      req.on('data', function(chunk) {
-        data += chunk;
-      });
-      req.on('end', function() {
-        postMessagePromise(data)
-        .then(JSON.stringify)
-        .then(function(data) {
-          handler.sendResponse(201, res, data, handler.headers);
-        })
-        .catch(function(err) {
-          handler.sendResponse(404, res, err, handler.headers);
-        });
+      req = req.body;
+      console.log(req);
+      postMessagePromise(req)
+      .then(function(results) {
+        results = JSON.stringify(results);
+        handler.sendResponse(201, res, results, handler.headers);
+      })
+      .catch(function(err) {
+        err = JSON.stringify(err);
+        handler.sendResponse(404, res, err, handler.headers);
       });
     }
   },

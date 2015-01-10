@@ -1,6 +1,6 @@
 var express = require('express');
 var db = require('./db');
-var controllers = require('./controllers');
+// var controllers = require('./controllers');
 
 // Middleware
 var morgan = require('morgan');
