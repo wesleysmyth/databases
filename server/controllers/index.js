@@ -24,7 +24,6 @@ module.exports = {
     post: function (req, res) {
       var postMessagePromise = bluebird.promisify(models.messages.post);
       req = req.body;
-      console.log(req);
       postMessagePromise(req)
       .then(function(results) {
         results = JSON.stringify(results);
