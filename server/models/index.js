@@ -8,13 +8,10 @@ module.exports = {
     get: function (callback) {
       var queryString = "SELECT * FROM chat.messages";
       var queryArgs = [];
-      var messages;
       db.dbConnection.query(queryString, queryArgs, function(err, results) {
         if (err) { throw err; }
         else {
-          messages = results[0];
-          // console.log(messages);
-          callback(err, messages);
+          callback(err, results);
         }
       });
     },

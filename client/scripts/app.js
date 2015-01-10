@@ -164,11 +164,10 @@ app = {
         data: { order: '-createdAt' },
         contentType: 'application/json',
         success: function(json){
-          console.log('success from loadMsgs');
-          app.displayMessages(json.results);
+          console.log(json);
+          app.displayMessages(json);
         },
         complete: function(){
-          console.log('stopping spinner');
           app.stopSpinner();
         }
       });
