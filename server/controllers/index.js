@@ -8,8 +8,8 @@ module.exports = {
     // a function which handles a get request for all messages
     get: function (req, res) {
       // promisified models.messages.get in order to preserve order of async function calls
-      var getPromise = models.messages.get;
-      getPromise()
+      var getMessagesPromise = bluebird.promisify(models.messages.get);
+      getMessagesPromise()
       .then(JSON.stringify)
       .then(function(data) {
         handler.sendResponse(200, res, data, handler.headers);
@@ -20,23 +20,55 @@ module.exports = {
     },
     // a function which handles posting a message to the database
     post: function (req, res) {
-
+      var postMessagePromise = bluebird.promisify(models.messages.post);
+      var data = '';
+      req.on('data', function(chunk) {
+        data += chunk;
+      });
+      req.on('end', function() {
+        postMessagePromise(data)
+        .then(JSON.stringify)
+        .then(function(data) {
+          handler.sendResponse(201, res, data, handler.headers);
+        })
+        .catch(function(err) {
+          handler.sendResponse(404, res, err, handler.headers);
+        });
+      });
     }
   },
 
   users: {
     // Ditto as above
     get: function (req, res) {
-      var data;
-      req.on('data', function() {
-        data = JSON.stringify(models.users.get());
-      });
-      req.on('end', function(){
-        var statusCode = data ? 200 : 404;
-        handler.sendResponse(statusCode, res, data, handler.headers);
+      // promisified models.users.get in order to preserve order of async function calls
+      var getUsersPromise = bluebird.promisify(models.users.get);
+      getUsersPromise()
+      .then(JSON.stringify)
+      .then(function(data) {
+        handler.sendResponse(200, res, data, handler.headers);
+      })
+      .catch(function(err) {
+        handler.sendResponse(404, res, err, handler.headers);
       });
     },
-    post: function (req, res) {}
+    post: function (req, res) {
+      var postUserPromise = bluebird.promisify(models.users.post);
+      var data = '';
+      req.on('data', function(chunk) {
+        data += chunk;
+      });
+      req.on('end', function() {
+        postUserPromise(data)
+        .then(JSON.stringify)
+        .then(function(data) {
+          handler.sendResponse(201, res, data, handler.headers);
+        })
+        .catch(function(err) {
+          handler.sendResponse(404, res, err, handler.headers);
+        });
+      });
+    }
   }
 };
 
