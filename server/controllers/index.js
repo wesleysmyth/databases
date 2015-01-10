@@ -7,13 +7,15 @@ module.exports = {
   messages: {
     // a function which handles a get request for all messages
     get: function (req, res) {
-      var data;
-      req.on('data', function() {
-        data = JSON.stringify(models.messages.get());
-      });
-      req.on('end', function(){
-        var statusCode = data ? 200 : 404;
-        handler.sendResponse(statusCode, res, data, handler.headers);
+      // promisified models.messages.get in order to preserve order of async function calls
+      var getPromise = models.messages.get;
+      getPromise()
+      .then(JSON.stringify)
+      .then(function(data) {
+        handler.sendResponse(200, res, data, handler.headers);
+      })
+      .catch(function(err) {
+        handler.sendResponse(404, res, err, handler.headers);
       });
     },
     // a function which handles posting a message to the database
