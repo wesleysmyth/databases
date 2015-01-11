@@ -53,6 +53,7 @@ module.exports = {
       });
     },
     post: function (req, res) {
+      console.log('post in controllers');
       var postUserPromise = bluebird.promisify(models.users.post);
       req = req.body;
       postUserPromise(req)
