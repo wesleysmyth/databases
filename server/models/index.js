@@ -6,11 +6,16 @@ module.exports = {
   messages: {
     // a function which produces all the messages
     get: function (callback) {
-      var queryString = "SELECT * FROM chat.messages";
+      var queryString = "SELECT * FROM chat.messages m INNER JOIN chat.users u ON m.user_id=u.U_Id";
       var queryArgs = [];
       db.dbConnection.query(queryString, queryArgs, function(err, results) {
-        if (err) { throw err; }
+        if (err) { callback(err); }
         else {
+          console.log(results);
+          for (var i = 0; i < results.length; i++) {
+            results[i].objectId = results[i].M_Id;
+            results[i].username = results[i].name;
+          }
           callback(err, results);
         }
       });
@@ -58,19 +63,25 @@ module.exports = {
 
   users: {
     // Ditto as above.
-    get: function () {
+    get: function (callback) {
       var queryString = "SELECT * FROM chat.users";
       var queryArgs = [];
-
       db.dbConnection.query(queryString, queryArgs, function(err, results) {
-        if (err) { throw err; }
+        if (err) { callback(err); }
         else {
-          return results;
+          callback(err, results);
         }
       });
     },
-    post: function (data) {
-
+    post: function (data, callback) {
+      var queryString = "INSERT into chat.users (name) VALUES (?)";
+      var queryArgs = [data.username];
+      db.dbConnection.query(queryString, queryArgs, function(err, results) {
+        if (err) { callback(err); }
+        else {
+          callback(err, data);
+        }
+      });
     }
   }
 };

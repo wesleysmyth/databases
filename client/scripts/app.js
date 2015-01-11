@@ -112,6 +112,18 @@ app = {
       // Get username
       app.username = window.location.search.substr(10);
 
+      var user = {username: app.username};
+
+      $.ajax({
+        url: app.server + '/users',
+        type: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify(user),
+        success: function(data) {
+          console.log('User entered ', data);
+        }
+      });
+
       app.onscreenMessages = {};
 
       // cache some dom references

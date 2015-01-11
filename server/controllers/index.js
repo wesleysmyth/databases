@@ -41,30 +41,28 @@ module.exports = {
     get: function (req, res) {
       // promisified models.users.get in order to preserve order of async function calls
       var getUsersPromise = bluebird.promisify(models.users.get);
+      req = req.body;
       getUsersPromise()
-      .then(JSON.stringify)
-      .then(function(data) {
-        handler.sendResponse(200, res, data, handler.headers);
+      .then(function(results) {
+        results = JSON.stringify(results);
+        handler.sendResponse(200, res, results, handler.headers);
       })
       .catch(function(err) {
+        err = JSON.stringify(err);
         handler.sendResponse(404, res, err, handler.headers);
       });
     },
     post: function (req, res) {
       var postUserPromise = bluebird.promisify(models.users.post);
-      var data = '';
-      req.on('data', function(chunk) {
-        data += chunk;
-      });
-      req.on('end', function() {
-        postUserPromise(data)
-        .then(JSON.stringify)
-        .then(function(data) {
-          handler.sendResponse(201, res, data, handler.headers);
-        })
-        .catch(function(err) {
-          handler.sendResponse(404, res, err, handler.headers);
-        });
+      req = req.body;
+      postUserPromise(req)
+      .then(function(results) {
+        results = JSON.stringify(results);
+        handler.sendResponse(201, res, results, handler.headers);
+      })
+      .catch(function(err) {
+        err = JSON.stringify(err);
+        handler.sendResponse(404, res, err, handler.headers);
       });
     }
   }
